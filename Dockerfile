@@ -45,7 +45,9 @@ RUN pip install --no-cache-dir -r ${WORKER_DIR}/requirements.txt && \
     rm ${WORKER_DIR}/requirements.txt
 
 # Fetch the model
-RUN python3 builder/build_model.py --model-name="${WORKER_MODEL_NAME}" --model-dir="${WORKER_MODEL_DIR}"
+COPY builder/build_model.py ${WORKER_DIR}/build_model.py
+RUN python3 -u ${WORKER_DIR}/build_model.py --model-name="${WORKER_MODEL_NAME}" --model-dir="${WORKER_MODEL_DIR}"
+RUN rm ${WORKER_DIR}/build_model.py
 
 # Add src files (Worker Template)
 ADD src ${WORKER_DIR}
