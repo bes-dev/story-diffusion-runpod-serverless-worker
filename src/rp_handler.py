@@ -18,7 +18,7 @@ model_dir = os.getenv("WORKER_MODEL_DIR", "/model")
 id_length = int(os.getenv("WORKER_ID_LENGTH", 4))
 total_length = int(os.getenv("WORKER_TOTAL_LENGTH", 5))
 device = if os.getenv("WORKER_USE_CUDA") == "True" else "cpu"
-scheduler_type = os.getenv("WORKER_SCHEDULER_TYPE", "euler")
+scheduler_type = os.getenv("WORKER_SCHEDULER_TYPE", "euler").lower()
 
 
 def upload_result(result: io.BytesIO, key: str) -> str:
