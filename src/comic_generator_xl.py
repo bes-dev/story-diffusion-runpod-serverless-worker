@@ -10,12 +10,12 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 # utils
-from utils import is_torch2_available, cal_attn_mask_xl
+from utils import is_torch2_available, cal_attn_mask_xl, setup_seed
 if is_torch2_available():
-    from utils.gradio_utils import \
+    from utils import \
         AttnProcessor2_0 as AttnProcessor
 else:
-    from utils.gradio_utils  import AttnProcessor
+    from utils  import AttnProcessor
 # diffusers
 import diffusers
 from diffusers import StableDiffusionXLPipeline
