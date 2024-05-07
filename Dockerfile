@@ -46,9 +46,9 @@ RUN pip install --no-cache-dir -r ${WORKER_DIR}/requirements.txt && \
 
 # Fetch the model
 COPY builder/build_model.py ${WORKER_DIR}/build_model.py
-RUN python3 -u ${WORKER_DIR}/build_model.py --model-name="${WORKER_MODEL_NAME}" --model-dir="${WORKER_MODEL_DIR}" --use-cuda
-RUN rm ${WORKER_DIR}/build_model.py
-RUN rm -rf /home/user/.cache/huggingface/
+RUN python3 -u ${WORKER_DIR}/build_model.py --model-name="${WORKER_MODEL_NAME}" --model-dir="${WORKER_MODEL_DIR}" --use-cuda && \
+    rm ${WORKER_DIR}/build_model.py && \
+    rm -rf /home/user/.cache/huggingface/
 
 # Add src files (Worker Template)
 ADD src ${WORKER_DIR}
