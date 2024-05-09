@@ -52,7 +52,7 @@ def run(job):
     # Inference image generator
     images = MODEL(
         prompts=validated_input["prompts"],
-        negative_prompts=validated_input.get("negative_prompts", None),
+        negative_prompt=validated_input.get("negative_prompt", None),
         width=validated_input.get("width", 768),
         height=validated_input.get("height", 768),
         sa32=validated_input.get("sa32", 0.5),
