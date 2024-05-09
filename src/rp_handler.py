@@ -28,7 +28,7 @@ def upload_result(result: io.BytesIO, key: str) -> str:
     if os.environ.get('BUCKET_ENDPOINT_URL', False):
         return upload_in_memory_object(
             key,
-            result.read(),
+            result.getvalue(),
             bucket_creds = {
                 "endpointUrl": os.environ.get('BUCKET_ENDPOINT_URL', None),
                 "accessId": os.environ.get('BUCKET_ACCESS_KEY_ID', None),
@@ -64,7 +64,7 @@ def run(job):
 
     # Upload output object
     zip_data = compress_images_to_zip(images)
-    output_data = upload_audio(zip_data, f"{job['id']}.zip")
+    output_data = upload_result(zip_data, f"{job['id']}.zip")
     job_output = {
         "output_data": output_data
     }
