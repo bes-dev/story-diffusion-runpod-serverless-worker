@@ -7,6 +7,7 @@ from runpod.serverless.utils.rp_validator import validate
 from runpod.serverless.utils.rp_upload import upload_in_memory_object
 from runpod.serverless.utils import rp_download, rp_cleanup
 # predictor
+import torch
 from comic_generator_xl import ComicGeneratorXL
 from rp_schema import INPUT_SCHEMA
 # utils
@@ -17,7 +18,7 @@ from utils import compress_images_to_zip
 model_dir = os.getenv("WORKER_MODEL_DIR", "/model")
 id_length = int(os.getenv("WORKER_ID_LENGTH", 4))
 total_length = int(os.getenv("WORKER_TOTAL_LENGTH", 5))
-device = if os.getenv("WORKER_USE_CUDA") == "True" else "cpu"
+device = "cuda" if os.getenv("WORKER_USE_CUDA") == "True" else "cpu"
 scheduler_type = os.getenv("WORKER_SCHEDULER_TYPE", "euler").lower()
 
 
@@ -76,7 +77,7 @@ def run(job):
 
 if __name__ == "__main__":
     MODEL = ComicGeneratorXL(
-        model_dir=model_dir,
+        model_name=model_dir,
         id_length=id_length,
         total_length=total_length,
         device=device,
