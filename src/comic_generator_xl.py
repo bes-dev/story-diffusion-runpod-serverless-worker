@@ -18,8 +18,11 @@ else:
     from utils  import AttnProcessor
 # diffusers
 import diffusers
-from diffusers import StableDiffusionXLPipeline
+# from diffusers import StableDiffusionXLPipeline
+from pipeline import StoryDiffusionXLPipeline
 from diffusers import DDIMScheduler, EulerDiscreteScheduler
+# utils
+from PIL import Image
 
 
 #################################################
@@ -273,7 +276,8 @@ class ComicGeneratorXL:
         total_length: int = 5,
         device: str = "cuda",
         torch_dtype: torch.dtype = torch.float16,
-        scheduler_type: str = "euler"
+        scheduler_type: str = "euler",
+        trigger_word: str = "img",
     ):
         global _total_count
         _total_count = 0
@@ -283,11 +287,22 @@ class ComicGeneratorXL:
         self.total_length = total_length
         self.device = device
         self.torch_dtype = torch_dtype
+        self.trigger_word = trigger_word
         # load pipeline
-        self.pipe = StableDiffusionXLPipeline.from_pretrained(
+        # self.pipe = StableDiffusionXLPipeline.from_pretrained(
+        # TODO: add photomaker loader
+        self.pipe = StoryDiffusionXLPipeline.from_pretrained(
             model_name,
             torch_dtype=torch_dtype
         ).to(device)
+        # load photomaker for personalization
+        photomaker_path = os.path.join(model_name, "photomaker", "photomaker-v1.bin")
+        self.pipe.load_photomaker_adapter(
+            photomaker_path,
+            subfolder = "",
+            weight_name = os.path.basename(photomaker_path),
+            trigger_word = self.trigger_word
+        )
         self.pipe.enable_freeu(s1=0.6, s2=0.4, b1=1.1, b2=1.2)
         if scheduler_type == "euler":
             self.pipe.scheduler = EulerDiscreteScheduler.from_config(self.pipe.scheduler.config)
@@ -328,7 +343,8 @@ class ComicGeneratorXL:
         # sdxl params
         guidance_scale: float = 5.0,
         num_inference_steps: int = 50,
-        seed: int = 2047
+        seed: int = 2047,
+        image_ref: Image.Image = None
     ):
         global _sa32, _sa64, _height, _width, _write, _mask1024, _mask4096, _cur_step, _attn_count
         # strength of consistent self-attention: the larger, the stronger
@@ -359,6 +375,7 @@ class ComicGeneratorXL:
         _write = True
         _cur_step = 0
         _attn_count = 0
+        input_id_images = [image_ref] if image_ref is not None else None
         id_images = self.pipe(
             id_prompts,
             num_inference_steps = num_inference_steps,
@@ -366,7 +383,8 @@ class ComicGeneratorXL:
             height = height,
             width = width,
             negative_prompt = negative_prompt,
-            generator = generator
+            generator = generator,
+            input_id_images = input_id_images
         ).images
         _write = False
         real_images = []
@@ -380,7 +398,8 @@ class ComicGeneratorXL:
                     guidance_scale = guidance_scale,
                     height = height,
                     width = width,
-                    generator = generator
+                    generator = generator,
+                    input_id_images = input_id_images
                 ).images[0]
             )
         return id_images + real_images

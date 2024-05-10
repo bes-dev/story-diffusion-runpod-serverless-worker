@@ -1,4 +1,6 @@
 import random
+import re
+import requests
 import io
 import zipfile
 import numpy as np
@@ -6,6 +8,21 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from PIL import Image
+
+
+def download_image(url: str) -> Image.Image:
+    """ Download an image from a URL
+
+    Args:
+        url (str): Image URL
+
+    Returns:
+        Image.Image: Image object
+    """
+    response = requests.get(url)
+    response.raise_for_status()
+    img = Image.open(io.BytesIO(response.content))
+    return img
 
 
 def compress_images_to_zip(images: list[Image.Image]) -> io.BytesIO:
@@ -25,6 +42,28 @@ def compress_images_to_zip(images: list[Image.Image]) -> io.BytesIO:
             image_data.seek(0)
             zip_file.writestr(f"{i}.png", image_data.getvalue())
     return zip_data
+
+
+def remove_word(input_string: str, word: str) -> str:
+    """ Remove a word from a string
+
+    Args:
+        input_string (str): Input string
+        word (str): Word to remove
+
+    Returns:
+        str: Cleaned string
+    """
+    try:
+        # Pattern to find the stopword with optional spaces around it
+        pattern = r'\s*\b' + re.escape(word) + r'\b\s*'
+        # Replace the stopword with a single space to handle potential extra spaces
+        cleaned_string = re.sub(pattern, ' ', input_string)
+        # Strip leading/trailing spaces and normalize multiple spaces to one
+        cleaned_string = re.sub(r'\s+', ' ', cleaned_string).strip()
+        return cleaned_string
+    except Exception as e:
+        return input_string
 
 
 def setup_seed(seed: int):

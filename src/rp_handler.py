@@ -11,7 +11,7 @@ import torch
 from comic_generator_xl import ComicGeneratorXL
 from rp_schema import INPUT_SCHEMA
 # utils
-from utils import compress_images_to_zip
+from utils import compress_images_to_zip, download_image
 
 
 # Worker params
@@ -49,17 +49,24 @@ def run(job):
         return {"error": validated_input['errors']}
     validated_input = validated_input['validated_input']
 
+    # download image
+    if "image_ref" in validated_input:
+        image_ref = download_image(validated_input["image_ref"])
+    else:
+        image_ref = None
+
     # Inference image generator
     images = MODEL(
-        prompts=validated_input["prompts"],
-        negative_prompt=validated_input.get("negative_prompt", None),
-        width=validated_input.get("width", 768),
-        height=validated_input.get("height", 768),
-        sa32=validated_input.get("sa32", 0.5),
-        sa64=validated_input.get("sa64", 0.5),
-        guidance_scale=validated_input.get("guidance_scale", 5.0),
-        num_inference_steps=validated_input.get("num_inference_steps", 25),
-        seed=validated_input.get("seed", 42)
+        prompts = validated_input["prompts"],
+        negative_prompt = validated_input.get("negative_prompt", None),
+        width = validated_input.get("width", 768),
+        height = validated_input.get("height", 768),
+        sa32 = validated_input.get("sa32", 0.5),
+        sa64 = validated_input.get("sa64", 0.5),
+        guidance_scale = validated_input.get("guidance_scale", 5.0),
+        num_inference_steps = validated_input.get("num_inference_steps", 25),
+        seed = validated_input.get("seed", 42),
+        image_ref = image_ref
     )
 
     # Upload output object
