@@ -20,6 +20,8 @@ This worker follows a modified version of the [worker template](https://github.c
 
 ## API
 
+Use 'img' as a trigger word for personalized generation cases.
+
 ```json
 {
   "input": {
@@ -32,6 +34,7 @@ This worker follows a modified version of the [worker template](https://github.c
       "guidance_scale": <guidance_scale:float>,
       "num_inference_steps": <num_inference_steps:int>,
       "seed": <seed:int>,
+      "image_ref": <link to reference image (Optional):str>
   }
 }
 ```
@@ -52,3 +55,7 @@ Sample request:
   }
 }
 ```
+
+## Related Resources
+
+This project is based on original implementation of [StoryDiffusion](https://github.com/HVision-NKU/StoryDiffusion).
