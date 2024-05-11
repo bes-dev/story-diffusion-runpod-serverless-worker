@@ -21,7 +21,7 @@ INPUT_SCHEMA = {
     },
     "sa64": {
         "type": float,
-        "required": False,
+        "required": True,
     },
     "guidance_scale": {
         "type": float,
@@ -33,6 +33,10 @@ INPUT_SCHEMA = {
     },
     "seed": {
         "type": int,
+        "required": True
+    },
+    "image_ref": {
+        "type": str,
         "required": True
     }
 }

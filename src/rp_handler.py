@@ -18,7 +18,7 @@ from utils import compress_images_to_zip, download_image
 model_dir = os.getenv("WORKER_MODEL_DIR", "/model")
 id_length = int(os.getenv("WORKER_ID_LENGTH", 4))
 total_length = int(os.getenv("WORKER_TOTAL_LENGTH", 5))
-device = "cuda" if os.getenv("WORKER_USE_CUDA") == "True" else "cpu"
+device = "cuda" if os.getenv("WORKER_USE_CUDA").lower() == "true" else "cpu"
 scheduler_type = os.getenv("WORKER_SCHEDULER_TYPE", "euler").lower()
 
 
@@ -50,7 +50,7 @@ def run(job):
     validated_input = validated_input['validated_input']
 
     # download image
-    if "image_ref" in validated_input:
+    if validated_input["image_ref"] != "":
         image_ref = download_image(validated_input["image_ref"])
     else:
         image_ref = None

@@ -4,3 +4,4 @@ transformers==4.40.1
 accelerate==0.30.0
 tqdm
 peft
+torchvision
