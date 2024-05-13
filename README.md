@@ -15,6 +15,22 @@ docker build .
  docker pull devbes/story-diffusion-serverless-worker:latest
  ```
 
+## Environment Variables
+
+### S3 storage
+
+- BUCKET_ENDPOINT_URL
+- BUCKET_ACCESS_KEY_ID
+- BUCKET_SECRET_ACCESS_KEY
+
+### Dockerfile configuration
+
+- WORKER_MODEL_NAME (default = SG161222/RealVisXL_V4.0)
+- WORKER_ID_LENGTH (default = 4)
+- WORKER_TOTAL_LENGTH (default = 5)
+- WORKER_SCHEDULER_TYPE (default = euler)
+
+
 ## Continuous Deployment
 This worker follows a modified version of the [worker template](https://github.com/runpod-workers/worker-template) where the Docker build workflow contains additional SD models to be built and pushed.
 
