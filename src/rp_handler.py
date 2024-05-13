@@ -1,3 +1,4 @@
+import base64
 import io
 import os
 import argparse
@@ -22,6 +23,17 @@ device = "cuda" if os.getenv("WORKER_USE_CUDA").lower() == "true" else "cpu"
 scheduler_type = os.getenv("WORKER_SCHEDULER_TYPE", "euler").lower()
 
 
+def bytesio_to_base64(bytes_io: io.BytesIO) -> str:
+    """ Convert BytesIO object to base64 string """
+    # Extract bytes from BytesIO object
+    byte_data = bytes_io.getvalue()
+    # Encode these bytes to a base64 string
+    base64_encoded = base64.b64encode(byte_data)
+    # Convert bytes to string
+    base64_string = base64_encoded.decode('utf-8')
+    return base64_string
+
+
 def upload_result(result: io.BytesIO, key: str) -> str:
     """ Uploads result to S3 bucket if it is available, otherwise returns base64 encoded file. """
     # Upload to S3
@@ -36,7 +48,7 @@ def upload_result(result: io.BytesIO, key: str) -> str:
             }
         )
     # Base64 encode
-    return result.decode('UTF-8')
+    return bytesio_to_base64(result)
 
 
 def run(job):
